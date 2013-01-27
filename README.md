@@ -35,6 +35,6 @@ It takes just one dollar to fill four cups with nutritious meals. Working togeth
 
 ### Bugs, Issues, Feedbacks, Help?
 
-Please report any bugs, issues, feedbacks or get help on the Aqua Page Builder's Issues page on Github - [Issues page](https://github.com/sy4mil/Aqua-Verifier/issues).
+Please report any bugs, issues, feedbacks or get help on the Aqua Verifier's Issues page on Github - [Issues page](https://github.com/sy4mil/Aqua-Verifier/issues).
 
 If you need general help that can't possibly be answered on the Issues page, please contact me directly via this [contact form](http://aquagraphite.com/about).
