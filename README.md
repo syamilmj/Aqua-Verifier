@@ -19,9 +19,9 @@ See [Aquagraphite Support Forum](http://support.aquagraphite.com/)
 
 ### User Guide
 
-* 1 - Download, unzip, and rename folder to "aqua-verifier"
-* 2 - Go to **Settings > General** and make the checkbox for `Anyone can register` is checked
-* 3 - Go to **Settings > Aqua Verifier** and fill in all the required fields
+1. Download, unzip, and rename folder to "aqua-verifier"
+2. Go to **Settings > General** and make the checkbox for `Anyone can register` is checked
+3. Go to **Settings > Aqua Verifier** and fill in all the required fields
 
 ### Donations
 
