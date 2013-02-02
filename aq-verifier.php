@@ -83,7 +83,9 @@ if(!class_exists('AQ_Verifier')) {
 
 			register_setting($slug, $slug, array($this, 'sanitize_settings') );
 
-			add_settings_section( $slug, '', function() { return false; }, $slug );
+		/*Anonymous functions didn't exist till PHP 5.3. A good number of hosts, mine inclusive, aren't yet at this version*/
+		//add_settings_section( $slug, '', function() { return false; }, $slug );
+		add_settings_section( $slug, '', $add_settings_sectionCallback, $slug );
 			
 			add_settings_field(
 				'marketplace_username', 
@@ -135,6 +137,10 @@ if(!class_exists('AQ_Verifier')) {
 
 		}
 
+			function add_settings_sectionCallback() { 
+			
+					return false; 
+			}
 			function settings_field_input($args) {
 				
 				$slug = $this->page;
