@@ -234,84 +234,84 @@ if(!class_exists('AQ_Verifier')) {
 		 */
 		function view_registration_page() {
 
-				global $errors;
-				$http_post = ('POST' == $_SERVER['REQUEST_METHOD']);
+			global $errors;
+			$http_post = ('POST' == $_SERVER['REQUEST_METHOD']);
 
-				if($http_post) {
-					
-					$action = $_POST['wp-submit']; 
-					$marketplace_username = $_POST['marketplace_username'];
-					$purchase_code = $_POST['purchase_code'];
-					$verify = $this->verify_purchase($marketplace_username, $purchase_code);
+			if($http_post) {
+				
+				$action = $_POST['wp-submit']; 
+				$marketplace_username = $_POST['marketplace_username'];
+				$purchase_code = $_POST['purchase_code'];
+				$verify = $this->verify_purchase($marketplace_username, $purchase_code);
 
-					if($action == 'Register') {
+				if($action == 'Register') {
 
-						if(!is_wp_error($verify)) {
+					if(!is_wp_error($verify)) {
 
-							$user_login = $_POST['user_login'];
-							$user_email = $_POST['user_email'];
-							$errors = register_new_user($user_login, $user_email);
-							
-							if ( !is_wp_error($errors) ) {
-								
-								$user_id = $errors;
-
-								// Change role
-					            wp_update_user( array ('ID' => $user_id, 'role' => 'participant') ) ;
-					            
-					            // Update user meta
-					            $items = array();
-					            $items[$purchase_code] = array (
-					            	'name' => $verify['item_name'],
-					            	'id' => $verify['item_id'],
-					            	'date' => $verify['created_at'],
-					            	'buyer' => $verify['buyer'],
-					            	'licence' => $verify['licence'],
-					            	'purchase_code' => $verify['purchase_code']
-					            );
-					            
-					            update_user_meta( $user_id, 'purchased_items', $item );
-
-								$redirect_to = 'wp-login.php?checkemail=registered';
-								wp_safe_redirect( $redirect_to );
-								exit();
-
-							} else {
-								$this->view_registration_form($errors, $verify);
-							}
-
-						} else {
-							// force to resubmit verify form
-							$this->view_verification_form($verify);
-						}
+						$user_login = $_POST['user_login'];
+						$user_email = $_POST['user_email'];
+						$errors = register_new_user($user_login, $user_email);
 						
+						if ( !is_wp_error($errors) ) {
+							
+							$user_id = $errors;
 
-					} elseif($action == 'Verify') {
+							// Change role
+				            wp_update_user( array ('ID' => $user_id, 'role' => 'participant') ) ;
+				            
+				            // Update user meta
+				            $items = array();
+				            $items[$purchase_code] = array (
+				            	'name' => $verify['item_name'],
+				            	'id' => $verify['item_id'],
+				            	'date' => $verify['created_at'],
+				            	'buyer' => $verify['buyer'],
+				            	'licence' => $verify['licence'],
+				            	'purchase_code' => $verify['purchase_code']
+				            );
+				            
+				            update_user_meta( $user_id, 'purchased_items', $items );
 
-						// Verified, supply the registration form
-						if(!is_wp_error($verify)) {
-
-							// Purchase Item Info
-							$this->view_registration_form($errors, $verify);
+							$redirect_to = 'wp-login.php?checkemail=registered';
+							wp_safe_redirect( $redirect_to );
+							exit();
 
 						} else {
-							
-							// Force to resubmit verify form
-							$this->view_verification_form($verify);
-
+							$this->view_registration_form($errors, $verify);
 						}
+
+					} else {
+						// force to resubmit verify form
+						$this->view_verification_form($verify);
+					}
+					
+
+				} elseif($action == 'Verify') {
+
+					// Verified, supply the registration form
+					if(!is_wp_error($verify)) {
+
+						// Purchase Item Info
+						$this->view_registration_form($errors, $verify);
+
+					} else {
+						
+						// Force to resubmit verify form
+						$this->view_verification_form($verify);
 
 					}
 
-				} else {
-
-					$this->view_verification_form();
-
 				}
 
-				$this->custom_style();
+			} else {
 
-				exit();
+				$this->view_verification_form();
+
+			}
+
+			$this->custom_style();
+
+			exit();
 
 		}
 
