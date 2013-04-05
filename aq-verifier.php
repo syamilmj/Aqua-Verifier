@@ -4,7 +4,7 @@
 Plugin Name: Aqua Verifier
 Plugin URI: http://aquagraphite.com/
 Description: Custom user registration form with Envato API verification
-Version: 1.0
+Version: 1.1
 Author: Syamil MJ
 Author URI: http://aquagraphite.com/
 
