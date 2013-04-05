@@ -4,7 +4,7 @@
 Plugin Name: Aqua Verifier
 Plugin URI: http://aquagraphite.com/
 Description: Custom user registration form with Envato API verification
-Version: 1.0
+Version: 1.1
 Author: Syamil MJ
 Author URI: http://aquagraphite.com/
 
@@ -122,6 +122,18 @@ if(!class_exists('AQ_Verifier')) {
 			);
 
 			add_settings_field(
+				'disable_username', 
+				'Disable Username input', 
+				array($this, 'settings_field_checkbox'), 
+				$slug, 
+				$slug, 
+				array(
+					'id' 	=> 'disable_username', 
+					'desc' 	=> __('disables the username field and uses only the purchase code', 'a10e_av')
+				)
+			);
+			
+			add_settings_field(
 				'display_credit', 
 				'Display "Powered by"', 
 				array($this, 'settings_field_checkbox'), 
@@ -234,84 +246,84 @@ if(!class_exists('AQ_Verifier')) {
 		 */
 		function view_registration_page() {
 
-				global $errors;
-				$http_post = ('POST' == $_SERVER['REQUEST_METHOD']);
+			global $errors;
+			$http_post = ('POST' == $_SERVER['REQUEST_METHOD']);
 
-				if($http_post) {
-					
-					$action = $_POST['wp-submit']; 
-					$marketplace_username = $_POST['marketplace_username'];
-					$purchase_code = $_POST['purchase_code'];
-					$verify = $this->verify_purchase($marketplace_username, $purchase_code);
+			if($http_post) {
+				
+				$action = $_POST['wp-submit']; 
+				$marketplace_username = isset($_POST['marketplace_username']) ? esc_attr($_POST['marketplace_username']) : '';
+				$purchase_code = esc_attr($_POST['purchase_code']);
+				$verify = $this->verify_purchase($marketplace_username, $purchase_code);
 
-					if($action == 'Register') {
+				if($action == 'Register') {
 
-						if(!is_wp_error($verify)) {
+					if(!is_wp_error($verify)) {
 
-							$user_login = $_POST['user_login'];
-							$user_email = $_POST['user_email'];
-							$errors = register_new_user($user_login, $user_email);
-							
-							if ( !is_wp_error($errors) ) {
-								
-								$user_id = $errors;
-
-								// Change role
-					            wp_update_user( array ('ID' => $user_id, 'role' => 'participant') ) ;
-					            
-					            // Update user meta
-					            $items = array();
-					            $items[$purchase_code] = array (
-					            	'name' => $verify['item_name'],
-					            	'id' => $verify['item_id'],
-					            	'date' => $verify['created_at'],
-					            	'buyer' => $verify['buyer'],
-					            	'licence' => $verify['licence'],
-					            	'purchase_code' => $verify['purchase_code']
-					            );
-					            
-					            update_user_meta( $user_id, 'purchased_items', $item );
-
-								$redirect_to = 'wp-login.php?checkemail=registered';
-								wp_safe_redirect( $redirect_to );
-								exit();
-
-							} else {
-								$this->view_registration_form($errors, $verify);
-							}
-
-						} else {
-							// force to resubmit verify form
-							$this->view_verification_form($verify);
-						}
+						$user_login = $_POST['user_login'];
+						$user_email = $_POST['user_email'];
+						$errors = register_new_user($user_login, $user_email);
 						
+						if ( !is_wp_error($errors) ) {
+							
+							$user_id = $errors;
 
-					} elseif($action == 'Verify') {
+							// Change role
+				            wp_update_user( array ('ID' => $user_id, 'role' => 'participant') ) ;
+				            
+				            // Update user meta
+				            $items = array();
+				            $items[$purchase_code] = array (
+				            	'name' => $verify['item_name'],
+				            	'id' => $verify['item_id'],
+				            	'date' => $verify['created_at'],
+				            	'buyer' => $verify['buyer'],
+				            	'licence' => $verify['licence'],
+				            	'purchase_code' => $verify['purchase_code']
+				            );
+				            
+				            update_user_meta( $user_id, 'purchased_items', $items );
 
-						// Verified, supply the registration form
-						if(!is_wp_error($verify)) {
-
-							// Purchase Item Info
-							$this->view_registration_form($errors, $verify);
+							$redirect_to = 'wp-login.php?checkemail=registered';
+							wp_safe_redirect( $redirect_to );
+							exit();
 
 						} else {
-							
-							// Force to resubmit verify form
-							$this->view_verification_form($verify);
-
+							$this->view_registration_form($errors, $verify);
 						}
+
+					} else {
+						// force to resubmit verify form
+						$this->view_verification_form($verify);
+					}
+					
+
+				} elseif($action == 'Verify') {
+
+					// Verified, supply the registration form
+					if(!is_wp_error($verify)) {
+
+						// Purchase Item Info
+						$this->view_registration_form($errors, $verify);
+
+					} else {
+						
+						// Force to resubmit verify form
+						$this->view_verification_form($verify);
 
 					}
 
-				} else {
-
-					$this->view_verification_form();
-
 				}
 
-				$this->custom_style();
+			} else {
 
-				exit();
+				$this->view_verification_form();
+
+			}
+
+			$this->custom_style();
+
+			exit();
 
 		}
 
@@ -320,10 +332,12 @@ if(!class_exists('AQ_Verifier')) {
 			login_header(__('Verify Purchase Form'), '<p class="message register">' . __('Verify Purchase') . '</p>', $errors); ?>
 
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
+				<?php if(!isset($this->options['disable_username'])) : ?>
 				<p>
 					<label for="marketplace_username"><?php _e('Marketplace Username (case sensitive)') ?><br />
 					<input type="text" name="marketplace_username" id="marketplace_username" class="input" size="20" tabindex="10" /></label>
 				</p>
+				<?php endif; ?>
 				<p>
 					<label for="purchase_code"><?php _e('Purchase Code') ?><br />
 					<input type="text" name="purchase_code" id="purchase_code" class="input" size="20" tabindex="20" /></label>
@@ -408,9 +422,11 @@ if(!class_exists('AQ_Verifier')) {
 		function verify_purchase($marketplace_username = '', $purchase_code = '') {
 
 			$errors = new WP_Error;
-
+			
+			$options = $this->options;
+			
 			// Check for empty fields
-			if(empty($marketplace_username) || empty($purchase_code)) {
+			if((empty($marketplace_username) && !$options['disable_username'] ) || empty($purchase_code)) {
 				$errors->add('incomplete_form', '<strong>Error</strong>: Incomplete form fields.');
 				return $errors;
 			}
@@ -454,7 +470,7 @@ if(!class_exists('AQ_Verifier')) {
 				if( $item ) {
 
 					// Check if username matches the one on marketplace
-					if( strcmp( $result['verify-purchase']['buyer'] , $marketplace_username ) !== 0 ) {
+					if( strcmp( $result['verify-purchase']['buyer'] , $marketplace_username ) !== 0 && !$options['disable_username'] ) {
 						$errors->add('invalid_marketplace_username', 'That username is not valid for this item purchase code. Please make sure you entered the correct username (case sensitive).' );
 					} else {
 						// add purchase code to $result['verify_purchase']
