@@ -83,7 +83,7 @@ if(!class_exists('AQ_Verifier')) {
 
 			register_setting($slug, $slug, array($this, 'sanitize_settings') );
 
-			add_settings_section( $slug, '', function() { return false; }, $slug );
+			add_settings_section( $slug, '', '__return_false', $slug );
 			
 			add_settings_field(
 				'marketplace_username', 
