@@ -122,6 +122,18 @@ if(!class_exists('AQ_Verifier')) {
 			);
 
 			add_settings_field(
+				'disable_username', 
+				'Disable Username input', 
+				array($this, 'settings_field_checkbox'), 
+				$slug, 
+				$slug, 
+				array(
+					'id' 	=> 'disable_username', 
+					'desc' 	=> __('Disable the username field and use only the purchase code', 'a10e_av')
+				)
+			);
+			
+			add_settings_field(
 				'display_credit', 
 				'Display "Powered by"', 
 				array($this, 'settings_field_checkbox'), 
@@ -239,9 +251,9 @@ if(!class_exists('AQ_Verifier')) {
 
 			if($http_post) {
 				
-				$action = $_POST['wp-submit']; 
-				$marketplace_username = $_POST['marketplace_username'];
-				$purchase_code = $_POST['purchase_code'];
+				$action = $_POST['wp-submit'];
+				$marketplace_username = isset($_POST['marketplace_username']) ? esc_attr($_POST['marketplace_username']) : '';
+				$purchase_code = esc_attr($_POST['purchase_code']);
 				$verify = $this->verify_purchase($marketplace_username, $purchase_code);
 
 				if($action == 'Register') {
@@ -281,7 +293,7 @@ if(!class_exists('AQ_Verifier')) {
 						}
 
 					} else {
-						// force to resubmit verify form
+						// Force to resubmit verify form
 						$this->view_verification_form($verify);
 					}
 					
@@ -320,17 +332,19 @@ if(!class_exists('AQ_Verifier')) {
 			login_header(__('Verify Purchase Form'), '<p class="message register">' . __('Verify Purchase') . '</p>', $errors); ?>
 
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
+				<?php if(!isset($this->options['disable_username'])) : ?>
 				<p>
 					<label for="marketplace_username"><?php _e('Marketplace Username (case sensitive)') ?><br />
 					<input type="text" name="marketplace_username" id="marketplace_username" class="input" size="20" tabindex="10" /></label>
 				</p>
+				<?php endif; ?>
 				<p>
 					<label for="purchase_code"><?php _e('Purchase Code') ?><br />
 					<input type="text" name="purchase_code" id="purchase_code" class="input" size="20" tabindex="20" /></label>
 					<p><a href="http://i.imgur.com/1y7hu.png" target="_blank">Where can I find my item purchase code?</a></p>
 				</p>
 				<br class="clear" />
-				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button-primary" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
+				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
 			</form>
 
 			<?php
@@ -408,9 +422,11 @@ if(!class_exists('AQ_Verifier')) {
 		function verify_purchase($marketplace_username = '', $purchase_code = '') {
 
 			$errors = new WP_Error;
-
+			
+			$options = $this->options;
+			
 			// Check for empty fields
-			if(empty($marketplace_username) || empty($purchase_code)) {
+			if((empty($marketplace_username) && !$options['disable_username'] ) || empty($purchase_code)) {
 				$errors->add('incomplete_form', '<strong>Error</strong>: Incomplete form fields.');
 				return $errors;
 			}
@@ -454,7 +470,7 @@ if(!class_exists('AQ_Verifier')) {
 				if( $item ) {
 
 					// Check if username matches the one on marketplace
-					if( strcmp( $result['verify-purchase']['buyer'] , $marketplace_username ) !== 0 ) {
+					if( strcmp( $result['verify-purchase']['buyer'] , $marketplace_username ) !== 0 && !$options['disable_username'] ) {
 						$errors->add('invalid_marketplace_username', 'That username is not valid for this item purchase code. Please make sure you entered the correct username (case sensitive).' );
 					} else {
 						// add purchase code to $result['verify_purchase']
