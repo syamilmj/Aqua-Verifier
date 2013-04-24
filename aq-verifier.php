@@ -344,7 +344,7 @@ if(!class_exists('AQ_Verifier')) {
 					<p><a href="http://i.imgur.com/1y7hu.png" target="_blank">Where can I find my item purchase code?</a></p>
 				</p>
 				<br class="clear" />
-				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button-primary" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
+				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
 			</form>
 
 			<?php
