@@ -334,14 +334,14 @@ if(!class_exists('AQ_Verifier')) {
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
 				<?php if(!isset($this->options['disable_username'])) : ?>
 				<p>
-					<label for="marketplace_username"><?php _e('Marketplace Username (case sensitive)') ?><br />
+					<label for="marketplace_username"><?php _e('Envato Marketplace Username (case sensitive)') ?><br />
 					<input type="text" name="marketplace_username" id="marketplace_username" class="input" size="20" tabindex="10" /></label>
 				</p>
 				<?php endif; ?>
 				<p>
-					<label for="purchase_code"><?php _e('Purchase Code') ?><br />
+					<label for="purchase_code"><?php _e('Envato Product Purchase Code') ?><br />
 					<input type="text" name="purchase_code" id="purchase_code" class="input" size="20" tabindex="20" /></label>
-					<p><a href="http://i.imgur.com/1y7hu.png" target="_blank">Where can I find my item purchase code?</a></p>
+					<p><a href="http://i.imgur.com/1y7hu.png?TB_iframe=true&width=600&height=550" class="thickbox" >Where can I find my item purchase code?</a></p>
 				</p>
 				<br class="clear" />
 				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
