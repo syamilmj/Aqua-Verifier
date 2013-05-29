@@ -329,7 +329,9 @@ if(!class_exists('AQ_Verifier')) {
 
 		function view_verification_form($errors = '') {
 
-			login_header(__('Verify Purchase Form'), '<p class="message register">' . __('Verify Purchase') . '</p>', $errors); ?>
+			login_header(__('Verify Purchase Form'), '<p class="message register">' . __('Verify Purchase') . '</p>', $errors); 
+			add_thickbox(); // Wake up thickbox
+			?>
 
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
 				<?php if(!isset($this->options['disable_username'])) : ?>
@@ -341,8 +343,7 @@ if(!class_exists('AQ_Verifier')) {
 				<p>
 					<label for="purchase_code"><?php _e('Envato Product Purchase Code') ?><br />
 					<input type="text" name="purchase_code" id="purchase_code" class="input" size="20" tabindex="20" /></label>
-					<p><a href="http://i.imgur.com/1y7hu.png?TB_iframe=true&width=600&height=550" class="thickbox" >Where can I find my item purchase code?</a></p>
-				</p>
+					<p><a href="<?php echo plugin_dir_url( __FILE__ ) ;?>screenshot.jpg?TB_iframe=true&width=600&height=550" class="thickbox">Where can I find my item purchase code?</a></p>
 				<br class="clear" />
 				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
 			</form>
