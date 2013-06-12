@@ -4,7 +4,7 @@
 Plugin Name: Aqua Verifier
 Plugin URI: http://aquagraphite.com/
 Description: Custom user registration form with Envato API verification
-Version: 1.1
+Version: 1.1.1
 Author: Syamil MJ
 Author URI: http://aquagraphite.com/
 
@@ -50,6 +50,8 @@ if(!class_exists('AQ_Verifier')) {
 		private $page; // settings page slug
 		private $options; // global options
 		private $api = 'http://marketplace.envato.com/api/edge/'; // base URL to envato api
+		public $plugin_url;
+		public $plugin_path;
 
 		/** Constructor */
 		function __construct() {
@@ -71,6 +73,16 @@ if(!class_exists('AQ_Verifier')) {
 				add_filter( 'shake_error_codes', array(&$this, 'shaker'), 10, 1 );
 				add_filter( 'login_headerurl', array(&$this, 'modify_login_headerurl'), 10, 1);
 			}
+
+			add_action('init', array(&$this, 'plugin_info'));
+
+		}
+
+		function plugin_info() {
+
+			$file = dirname(__FILE__) . '/aq-verifier.php';
+			$this->plugin_url = plugin_dir_url($file);
+			$this->plugin_path = plugin_dir_path($file);
 
 		}
 
@@ -341,7 +353,7 @@ if(!class_exists('AQ_Verifier')) {
 				<p>
 					<label for="purchase_code"><?php _e('Purchase Code') ?><br />
 					<input type="text" name="purchase_code" id="purchase_code" class="input" size="20" tabindex="20" /></label>
-					<p><a href="http://i.imgur.com/1y7hu.png" target="_blank">Where can I find my item purchase code?</a></p>
+					<p><a href="<?php echo $this->plugin_url; ?>img/find-item-purchase-code.png" target="_blank">Where can I find my item purchase code?</a></p>
 				</p>
 				<br class="clear" />
 				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e('Verify'); ?>" tabindex="100" /></p>
