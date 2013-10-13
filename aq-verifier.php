@@ -179,7 +179,7 @@ if(!class_exists('AQ_Verifier')) {
 				$desc = $args['desc'];
 				$options = $this->options;
 
-				$default = "#login {width: 500px} .success {background-color: #F0FFF8; border: 1px solid #CEEFE1;";
+				$default = "#login {width: 500px} .success {background-color: #F0FFF8; border: 1px solid #CEEFE1;}";
 
 				if(!isset($options['custom_style'])) $options['custom_style'] = $default;
 				$text = $options['custom_style'];
