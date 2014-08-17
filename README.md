@@ -5,7 +5,7 @@
 
 ### Overview
 
-Aqua Verifier is a simple WordPress plugin that modifies the default user registration page by adding a verification form using the [Envato Marketplace API](http://themeforest.net/help/api).
+Aqua Verifier is a simple WordPress plugin that modifies the default user registration page by adding a verification form using the [Envato Market API](http://themeforest.net/help/api).
 
 Coupled with BBPress plugin, this will allow you to easily create your own Support Forum while still having all the default functionalities of the registration form that everyone is already familiar with.
 
