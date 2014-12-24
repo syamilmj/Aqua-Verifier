@@ -99,7 +99,7 @@ if(!class_exists('AQ_Verifier')) {
 			
 			add_settings_field(
 				'marketplace_username', 
-				'Marketplace Username', 
+				'Market Username', 
 				array($this, 'settings_field_input'), 
 				$slug, 
 				$slug, 
@@ -346,7 +346,7 @@ if(!class_exists('AQ_Verifier')) {
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
 				<?php if(!isset($this->options['disable_username'])) : ?>
 				<p>
-					<label for="marketplace_username"><?php _e('Marketplace Username (case sensitive)') ?><br />
+					<label for="marketplace_username"><?php _e('Market Username (case sensitive)') ?><br />
 					<input type="text" name="marketplace_username" id="marketplace_username" class="input" size="20" tabindex="10" /></label>
 				</p>
 				<?php endif; ?>
