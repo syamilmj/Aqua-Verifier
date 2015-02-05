@@ -407,8 +407,23 @@ if(!class_exists('AQ_Verifier')) {
 					<input type="email" name="user_email" id="user_email" class="input" value="" size="25" tabindex="20" /></label>
 				</p>
 
+				<?php
+				/*
+				 * Add support for other plugins to hook in custom fields
+				 */
+				if (has_action('register_form')):
+					do_action('register_form'); 
+				?>
+				
+					<br class="clear" />
+				
+				<?php endif; ?>
+				
+
 				<p id="reg_passmail"><?php _e('A password will be e-mailed to you.') ?></p>
+				
 				<br class="clear" />
+				
 				<p class="submit"><input type="submit" name="wp-submit" id="wp-submit" class="button-primary" value="<?php esc_attr_e('Register'); ?>" tabindex="100" /></p>
 
 			</form>
