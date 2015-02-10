@@ -32,11 +32,16 @@ Author URI: http://aquagraphite.com/
  * **********************************************************************
  */
 
+namespace aqVerifier;
+
 /** Prevent direct access **/
 if ( !defined( 'ABSPATH' ) ) exit;
 
 /** Translations */
 load_plugin_textdomain( 'a10e_av', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+
+require_once( 'vendor/autoload.php' );
+
 
 /**
  * AQ_Verifier class
@@ -55,7 +60,7 @@ if(!class_exists('AQ_Verifier')) {
 
 		/** Constructor */
 		function __construct() {
-			
+
 			if(!get_option('aq_verifier_slug')) update_option( 'aq_verifier_slug', 'settings_page_aqua-verifier' );
 
 			$slug 			= get_option('aq_verifier_slug');
@@ -96,63 +101,63 @@ if(!class_exists('AQ_Verifier')) {
 			register_setting($slug, $slug, array($this, 'sanitize_settings') );
 
 			add_settings_section( $slug, '', '__return_false', $slug );
-			
+
 			add_settings_field(
-				'marketplace_username', 
-				'Market Username', 
-				array($this, 'settings_field_input'), 
-				$slug, 
-				$slug, 
+				'marketplace_username',
+				'Market Username',
+				array($this, 'settings_field_input'),
+				$slug,
+				$slug,
 				array(
-					'id' 	=> 'marketplace_username', 
+					'id' 	=> 'marketplace_username',
 					'desc' 	=> __('Case sensitive', 'a10e_av')
-				) 
+				)
 			);
 
 			add_settings_field(
-				'api_key', 
-				'API Key', 
-				array($this, 'settings_field_input'), 
-				$slug, 
-				$slug, 
+				'api_key',
+				'API Key',
+				array($this, 'settings_field_input'),
+				$slug,
+				$slug,
 				array(
-					'id' 	=> 'api_key', 
+					'id' 	=> 'api_key',
 					'desc' 	=> __('More info about ', 'a10e') . '<a href="http://themeforest.net/help/api">Envato API</a>'
 				)
 			);
 
 			add_settings_field(
-				'custom_style', 
-				'Custom Styling', 
-				array($this, 'settings_field_textarea'), 
-				$slug, 
-				$slug, 
+				'custom_style',
+				'Custom Styling',
+				array($this, 'settings_field_textarea'),
+				$slug,
+				$slug,
 				array(
-					'id' 	=> 'custom_style', 
+					'id' 	=> 'custom_style',
 					'desc' 	=> __('Add custom inline styling to the registration page', 'a10e_av')
 				)
 			);
 
 			add_settings_field(
-				'disable_username', 
-				'Disable Username input', 
-				array($this, 'settings_field_checkbox'), 
-				$slug, 
-				$slug, 
+				'disable_username',
+				'Disable Username input',
+				array($this, 'settings_field_checkbox'),
+				$slug,
+				$slug,
 				array(
-					'id' 	=> 'disable_username', 
+					'id' 	=> 'disable_username',
 					'desc' 	=> __('Disable the username field and use only the purchase code', 'a10e_av')
 				)
 			);
-			
+
 			add_settings_field(
-				'display_credit', 
-				'Display "Powered by"', 
-				array($this, 'settings_field_checkbox'), 
-				$slug, 
-				$slug, 
+				'display_credit',
+				'Display "Powered by"',
+				array($this, 'settings_field_checkbox'),
+				$slug,
+				$slug,
 				array(
-					'id' 	=> 'display_credit', 
+					'id' 	=> 'display_credit',
 					'desc' 	=> __('Display small credit line to help others find the plugin', 'a10e_av')
 				)
 			);
@@ -160,7 +165,7 @@ if(!class_exists('AQ_Verifier')) {
 		}
 
 			function settings_field_input($args) {
-				
+
 				$slug = $this->page;
 				$id = $args['id'];
 				$desc = $args['desc'];
@@ -202,7 +207,7 @@ if(!class_exists('AQ_Verifier')) {
 
 			}
 
-			/** 
+			/**
 			 * Sanitize options
 			 *
 			 * @todo 	Check if author/key is valid
@@ -214,11 +219,11 @@ if(!class_exists('AQ_Verifier')) {
 				// $author 	= $args['marketplace_username'];
 				// $api_key 	= $args['api_key'];
 
-				// add_settings_error( 
-				// 	$slug, 
-				// 	'invalid_author', 
-				// 	__('That username/api-key is invalid. Please make sure that you have entered them correctly', 'a10e_av'), 
-				// 	'error' 
+				// add_settings_error(
+				// 	$slug,
+				// 	'invalid_author',
+				// 	__('That username/api-key is invalid. Please make sure that you have entered them correctly', 'a10e_av'),
+				// 	'error'
 				// );
 
 				return $args;
@@ -233,7 +238,7 @@ if(!class_exists('AQ_Verifier')) {
 			?>
 
 			<div class="wrap">
-	
+
 				<div id="icon-options-general" class="icon32"></div>
 				<h2><?php _e( 'Aqua Verifier Settings', 'a10e_av' ); ?></h2>
 
@@ -262,7 +267,7 @@ if(!class_exists('AQ_Verifier')) {
 			$http_post = ('POST' == $_SERVER['REQUEST_METHOD']);
 
 			if($http_post) {
-				
+
 				$action = $_POST['wp-submit'];
 				$marketplace_username = isset($_POST['marketplace_username']) ? esc_attr($_POST['marketplace_username']) : '';
 				$purchase_code = esc_attr($_POST['purchase_code']);
@@ -275,14 +280,14 @@ if(!class_exists('AQ_Verifier')) {
 						$user_login = $_POST['user_login'];
 						$user_email = $_POST['user_email'];
 						$errors = register_new_user($user_login, $user_email);
-						
+
 						if ( !is_wp_error($errors) ) {
-							
+
 							$user_id = $errors;
 
 							// Change role
 				            wp_update_user( array ('ID' => $user_id, 'role' => 'participant') ) ;
-				            
+
 				            // Update user meta
 				            $items = array();
 				            $items[$purchase_code] = array (
@@ -293,7 +298,7 @@ if(!class_exists('AQ_Verifier')) {
 				            	'licence' => $verify['licence'],
 				            	'purchase_code' => $verify['purchase_code']
 				            );
-				            
+
 				            update_user_meta( $user_id, 'purchased_items', $items );
 
 							$redirect_to = 'wp-login.php?checkemail=registered';
@@ -308,7 +313,7 @@ if(!class_exists('AQ_Verifier')) {
 						// Force to resubmit verify form
 						$this->view_verification_form($verify);
 					}
-					
+
 
 				} elseif($action == 'Verify') {
 
@@ -319,7 +324,7 @@ if(!class_exists('AQ_Verifier')) {
 						$this->view_registration_form($errors, $verify);
 
 					} else {
-						
+
 						// Force to resubmit verify form
 						$this->view_verification_form($verify);
 
@@ -379,7 +384,7 @@ if(!class_exists('AQ_Verifier')) {
 			if($verified) {
 				?>
 				<div class="message success">
-					
+
 					<h3>Purchase Information</h3><br/>
 					<ul>
 					<li><strong>Buyer: </strong><?php echo $verified['buyer']; ?></li>
@@ -394,7 +399,7 @@ if(!class_exists('AQ_Verifier')) {
 			?>
 
 			<form name="registerform" id="registerform" action="<?php echo esc_url( site_url('wp-login.php?action=register', 'login_post') ); ?>" method="post">
-				
+
 				<input type="hidden" name="marketplace_username" value="<?php echo $verified['buyer']; ?>" />
 				<input type="hidden" name="purchase_code" value="<?php echo $verified['purchase_code']; ?>" />
 
@@ -434,9 +439,9 @@ if(!class_exists('AQ_Verifier')) {
 		function verify_purchase($marketplace_username = '', $purchase_code = '') {
 
 			$errors = new WP_Error;
-			
+
 			$options = $this->options;
-			
+
 			// Check for empty fields
 			if((empty($marketplace_username) && !$options['disable_username'] ) || empty($purchase_code)) {
 				$errors->add('incomplete_form', '<strong>Error</strong>: Incomplete form fields.');
@@ -450,7 +455,7 @@ if(!class_exists('AQ_Verifier')) {
 			$api_key		= $options['api_key'];
 			$purchase_code 	= urlencode($purchase_code);
 			$api_url 		= $this->api .$author.'/'.$api_key.'/verify-purchase:'.$purchase_code.'.json';
-			$verified 		= false; 
+			$verified 		= false;
 			$result 		= '';
 
 			// Check if purchase code already used
@@ -478,7 +483,7 @@ if(!class_exists('AQ_Verifier')) {
 
 				$result = json_decode($response['body'], true);
 				$item 	= @$result['verify-purchase']['item_name'];
-				
+
 				if( $item ) {
 
 					// Check if username matches the one on marketplace
@@ -489,7 +494,7 @@ if(!class_exists('AQ_Verifier')) {
 						$result['verify-purchase']['purchase_code'] = $purchase_code;
 						$verified = true;
 					}
-						
+
 				} else {
 					// Tell user the purchase code is invalid
 					$errors->add('invalid_purchase_code', 'Sorry, but that item purchase code is invalid. Please make sure you have entered the correct purchase code.');
@@ -507,8 +512,8 @@ if(!class_exists('AQ_Verifier')) {
 
 		}
 
-		/** 
-		 * Custom form stylings 
+		/**
+		 * Custom form stylings
 		 *
 		 * Adds inline stylings defined in admin options
 		 * @since 	1.0
@@ -540,8 +545,8 @@ if(!class_exists('AQ_Verifier')) {
 
 		}
 
-		/** 
-		 * Adds custom shaker codes 
+		/**
+		 * Adds custom shaker codes
 		 *
 		 * Shake that sexy red booty
 		 * @since 	1.0
