@@ -42,6 +42,7 @@ load_plugin_textdomain( 'a10e_av', false, dirname( plugin_basename( __FILE__ ) )
 
 require_once( 'vendor/autoload.php' );
 
+new Settings();
 
 /**
  * AQ_Verifier class
@@ -70,14 +71,9 @@ if(!class_exists('AQ_Verifier')) {
 		}
 
 		function init() {
-
-			if(is_admin()) {
-				add_action( 'admin_menu', array($this, 'register_settings') );
-			} else {
-				add_action( 'login_form_register', array($this, 'view_registration_page') );
-				add_filter( 'shake_error_codes', array(&$this, 'shaker'), 10, 1 );
-				add_filter( 'login_headerurl', array(&$this, 'modify_login_headerurl'), 10, 1);
-			}
+			add_action( 'login_form_register', array($this, 'view_registration_page') );
+			add_filter( 'shake_error_codes', array(&$this, 'shaker'), 10, 1 );
+			add_filter( 'login_headerurl', array(&$this, 'modify_login_headerurl'), 10, 1);
 
 			add_action('init', array(&$this, 'plugin_info'));
 
@@ -91,170 +87,8 @@ if(!class_exists('AQ_Verifier')) {
 
 		}
 
-		function register_settings() {
 
-			$slug = add_options_page( 'Aqua Verifier', 'Aqua Verifier', 'manage_options', 'aqua-verifier', array($this, 'view_admin_settings') );
 
-			$this->page 	= $slug;
-			$this->options 	= get_option($slug);
-
-			register_setting($slug, $slug, array($this, 'sanitize_settings') );
-
-			add_settings_section( $slug, '', '__return_false', $slug );
-
-			add_settings_field(
-				'marketplace_username',
-				'Market Username',
-				array($this, 'settings_field_input'),
-				$slug,
-				$slug,
-				array(
-					'id' 	=> 'marketplace_username',
-					'desc' 	=> __('Case sensitive', 'a10e_av')
-				)
-			);
-
-			add_settings_field(
-				'api_key',
-				'API Key',
-				array($this, 'settings_field_input'),
-				$slug,
-				$slug,
-				array(
-					'id' 	=> 'api_key',
-					'desc' 	=> __('More info about ', 'a10e') . '<a href="http://themeforest.net/help/api">Envato API</a>'
-				)
-			);
-
-			add_settings_field(
-				'custom_style',
-				'Custom Styling',
-				array($this, 'settings_field_textarea'),
-				$slug,
-				$slug,
-				array(
-					'id' 	=> 'custom_style',
-					'desc' 	=> __('Add custom inline styling to the registration page', 'a10e_av')
-				)
-			);
-
-			add_settings_field(
-				'disable_username',
-				'Disable Username input',
-				array($this, 'settings_field_checkbox'),
-				$slug,
-				$slug,
-				array(
-					'id' 	=> 'disable_username',
-					'desc' 	=> __('Disable the username field and use only the purchase code', 'a10e_av')
-				)
-			);
-
-			add_settings_field(
-				'display_credit',
-				'Display "Powered by"',
-				array($this, 'settings_field_checkbox'),
-				$slug,
-				$slug,
-				array(
-					'id' 	=> 'display_credit',
-					'desc' 	=> __('Display small credit line to help others find the plugin', 'a10e_av')
-				)
-			);
-
-		}
-
-			function settings_field_input($args) {
-
-				$slug = $this->page;
-				$id = $args['id'];
-				$desc = $args['desc'];
-				$options = $this->options;
-				$value = isset($options[$id]) ? $options[$id] : '';
-
-				echo "<input id='$id' name='{$slug}[{$id}]' size='40' type='text' value='{$value}' />";
-				echo "<p class='description'>$desc</div>";
-
-			}
-
-			function settings_field_textarea($args) {
-
-				$slug = $this->page;
-				$id = $args['id'];
-				$desc = $args['desc'];
-				$options = $this->options;
-
-				$default = "#login {width: 500px} .success {background-color: #F0FFF8; border: 1px solid #CEEFE1;";
-
-				if(!isset($options['custom_style'])) $options['custom_style'] = $default;
-				$text = $options['custom_style'];
-
-				echo "<textarea id='{$id}' name='{$slug}[{$id}]' rows='7' cols='50' class='large-text code'>{$text}</textarea>";
-				echo "<p class='description'>$desc</div>";
-
-			}
-
-			function settings_field_checkbox($args) {
-
-				$slug = $this->page;
-				$id = $args['id'];
-				$desc = $args['desc'];
-				$options = $this->options;
-
-				echo '<label for="'. $id .'">';
-					echo '<input type="checkbox" id="'.$id.'" name="'. $slug .'['. $id .']" value="1" '. checked( $options[$id], 1, false ) .'/>';
-				echo '&nbsp;' . $desc .'</label>';
-
-			}
-
-			/**
-			 * Sanitize options
-			 *
-			 * @todo 	Check if author/key is valid
-			 * @since 	1.0
-			 */
-			function sanitize_settings($args) {
-
-				// $slug 		= $this->page;
-				// $author 	= $args['marketplace_username'];
-				// $api_key 	= $args['api_key'];
-
-				// add_settings_error(
-				// 	$slug,
-				// 	'invalid_author',
-				// 	__('That username/api-key is invalid. Please make sure that you have entered them correctly', 'a10e_av'),
-				// 	'error'
-				// );
-
-				return $args;
-			}
-
-		/**
-		 * Main Settings panel
-		 *
-		 * @since 	1.0
-		 */
-		function view_admin_settings() {
-			?>
-
-			<div class="wrap">
-
-				<div id="icon-options-general" class="icon32"></div>
-				<h2><?php _e( 'Aqua Verifier Settings', 'a10e_av' ); ?></h2>
-
-				<form action="options.php" method="post">
-				<?php
-				$slug = $this->page;
-				settings_fields($slug, $slug);
-				do_settings_sections($slug);
-				submit_button();
-				?>
-				</form>
-
-			</div>
-
-			<?php
-		}
 
 		/**
 		 * Modifies the default registration page
