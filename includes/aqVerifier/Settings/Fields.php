@@ -3,10 +3,18 @@
 namespace aqVerifier\Settings;
 
 class Fields {
-	function __construct() {
-	}
+	function __construct() {}
 
 
+	/**
+	 * Normalize field values
+	 *
+	 * @method parse_args
+	 *
+	 * @param  array     $args
+	 *
+	 * @return array     normalized array
+	 */
 	protected function parse_args( $args ){
 		$id = $args['id'];
 
@@ -21,6 +29,15 @@ class Fields {
 	}
 
 
+	/**
+	 * Display the description markup only when there is a description to show
+	 *
+	 * @method get_description
+	 *
+	 * @param  array          $args
+	 *
+	 * @return string
+	 */
 	protected function get_description( $args ){
 		if( !empty( $args['desc'] ) ){
 			return sprintf( '<p class="description">%s</p>', $args['desc'] );
@@ -43,6 +60,7 @@ class Fields {
 		echo $field;
 	}
 
+
 	function textarea( $args ) {
 		$args = $this->parse_args( $args );
 		$field = sprintf( '<textarea id="%1$s" name="%2$s[%1$s]" class="large-text code">%3$s</textarea>',
@@ -56,6 +74,7 @@ class Fields {
 		echo $field;
 	}
 
+
 	function checkbox( $args ) {
 		$args = $this->parse_args( $args );
 		$field = sprintf( '<label for="%1$s"><input type="checkbox" id="%1$s" name="%2$s[%1$s]" value="1" %3$s> %4$s</label>',
@@ -67,5 +86,4 @@ class Fields {
 
 		echo $field;
 	}
-
 }

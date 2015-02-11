@@ -42,7 +42,7 @@ load_plugin_textdomain( 'a10e_av', false, dirname( plugin_basename( __FILE__ ) )
 
 require_once( 'vendor/autoload.php' );
 
-new Settings();
+new Settings( new Settings\Fields );
 
 /**
  * AQ_Verifier class
@@ -373,7 +373,7 @@ if(!class_exists('AQ_Verifier')) {
 
 			$options = $this->options;
 
-			if(@$options['display_credit']) {
+			if( isset( $options['display_credit'] ) && $options['display_credit'] == 1 ) {
 				echo '<p style="font-size:10px; text-align:right; padding-top: 10px;">Powered by <a target="_blank" href="http://aquagraphite.com/aqua-verifier/">Aqua Verifier</a></p>';
 			}
 
