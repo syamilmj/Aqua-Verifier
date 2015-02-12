@@ -9,6 +9,9 @@ Aqua Verifier is a simple WordPress plugin that modifies the default user regist
 
 Coupled with BBPress plugin, this will allow you to easily create your own Support Forum while still having all the default functionalities of the registration form that everyone is already familiar with.
 
+### Server requirements
+Because we make good use of PHP namespaces, your server should support at least PHP 5.3, but any newer version would work just fine.
+
 ### License
 
 Aqua Verifier is released under GPLv3 - [http://www.gnu.org/copyleft/gpl.html](http://www.gnu.org/copyleft/gpl.html). You are free to redistribute & modify the plugin in either free or commercial products. Please kindly keep all links & credits intact.
@@ -28,7 +31,7 @@ See [Aquagraphite Support Forum](http://support.aquagraphite.com/)
 <a href="https://www.wfp.org/donate/fillthecup?icn=homepage-donate-cup&ici=small-button-link"><img src="https://www.wfp.org/sites/default/files/640x300_donation-form.jpg"/></a>
 
 With your support, the World Food Programme is fighting hunger every day, whether we’re saving lives in an emergency or nourishing the bodies and minds of children by providing school meals.
- 
+
 It takes just one dollar to fill four cups with nutritious meals. Working together, we can build a world without hunger.
 
 **<a href="https://www.wfp.org/donate/fillthecup?icn=homepage-donate-cup&ici=small-button-link">FILL THE CUP!</a>**
