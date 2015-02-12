@@ -272,7 +272,7 @@ if(!class_exists('AQ_Verifier')) {
 		 */
 		function verify_purchase($marketplace_username = '', $purchase_code = '') {
 
-			$errors = new WP_Error;
+			$errors = new \WP_Error;
 
 			$options = $this->options;
 
