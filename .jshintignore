@@ -1,0 +1,6 @@
+/assets/js/vendor/*.js
+/**/*.min.js
+/admin/components/**/*.js
+/admin/redux/**/*.js
+/shortcodes/generator/assets/js
+/tax-terms-order/**/*.js

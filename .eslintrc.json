@@ -1,0 +1,21 @@
+{
+	"extends": "plugin:@wordpress/eslint-plugin/es5",
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"parser": "babel-eslint",
+	"rules": {
+		"quotes": [
+			2,
+			"single"
+		],
+		"linebreak-style": 0,
+		"wrap-iife": ["error", "any"],
+		"no-multi-spaces": 0
+	},
+	"parserOptions": {
+		"ecmaVersion": 5,
+		"sourceType": "script"
+	}
+}
