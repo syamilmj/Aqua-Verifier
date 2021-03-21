@@ -162,7 +162,7 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 				$slug,
 				array(
 					'id'   => 'api_key',
-					'desc' => __( 'More info about ', 'a10e_av' ) . '<a href="https://themeforest.net/help/api">Envato API</a>',
+					'desc' => __( 'More info about ', 'a10e_av' ) . '<a target="_blank" href="https://themeforest.net/help/api">Envato API</a>',
 				)
 			);
 
@@ -217,7 +217,7 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 			$value   = $options[ $id ] ?? '';
 
 			echo "<input id='" . esc_attr( $id ) . "' name='" . esc_attr( $slug ) . '[' . esc_attr( $id ) . ']' . "' size='40' type='text' value='" . esc_attr( $value ) . "' />";
-			echo "<p class='description'>" . esc_html( $desc ) . '</div>';
+			echo "<p class='description'>" . wp_kses_post( $desc ) . '</div>';
 		}
 
 		/**
@@ -270,7 +270,7 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 
 			$api_url = $api . 'user:' . $args['marketplace_username'] . '.json';
 
-			$args = array(
+			$api_args = array(
 				'timeout' => 20,
 				'headers' => array(
 					'Authorization' => 'Bearer ' . $this->envato_token,
@@ -278,14 +278,12 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 				),
 			);
 
-			$response = wp_remote_get( $api_url, $args );
+			$response = wp_remote_get( $api_url, $api_args );
+
+			$slug = $this->page;
 
 			if ( ! is_wp_error( $response ) && is_array( $response ) && ! empty( $response['body'] ) ) {
 				if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-					$slug    = $this->page;
-					$author  = $args['marketplace_username'];
-					$api_key = $args['api_key'];
-
 					add_settings_error(
 						$slug,
 						'invalid_author',
@@ -337,7 +335,6 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 					$marketplace_username = sanitize_text_field( wp_unslash( $_POST['marketplace_username'] ?? '' ) );
 					$purchase_code        = sanitize_text_field( wp_unslash( $_POST['purchase_code'] ?? '' ) );
 					$verify               = $this->verify_purchase( $marketplace_username, $purchase_code );
-
 					if ( 'Register' === $action ) {
 						if ( ! is_wp_error( $verify ) ) {
 							$user_login = sanitize_text_field( wp_unslash( $_POST['user_login'] ?? '' ) );
@@ -353,7 +350,7 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 								wp_update_user(
 									array(
 										'ID'   => $user_id,
-										'role' => 'participant',
+										'role' => 'subscriber',
 									)
 								);
 
@@ -542,7 +539,7 @@ if ( ! class_exists( 'AQ_Verifier' ) ) {
 				return $errors;
 			}
 
-			if ( preg_match( '/^([a-f0-9]{8})-(([a-f0-9]{4})-){3}([a-f0-9]{12})$/i', $code ) ) {
+			if ( preg_match( '/^([a-f0-9]{8})-(([a-f0-9]{4})-){3}([a-f0-9]{12})$/i', $purchase_code ) ) {
 				$args = array(
 					'timeout' => 20,
 					'headers' => array(
